@@ -51,6 +51,6 @@ const styles = StyleSheet.create({
     ...termButtonBase,
     backgroundColor: '#105f25',
   }
-})
+});
 
 export default TermSelector;
