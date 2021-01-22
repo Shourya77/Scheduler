@@ -1,14 +1,13 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import Course from './Course';
 import { hasConflict } from './utils/course';
 
-const CourseSelector = ({courses}) => {
+const CourseSelector = ({ courses, view}) => {
     const [selected, setSelected] = useState([]);
-    const toggle = course => setSelected(selected => (
+    const toggle = (course) => setSelected(selected => (
         selected.includes(course) ? selected.filter(x => x !== course) : [...selected, course]
     ))
-        console.log(selected)
     return (
         <View style={styles.courseList}>
             {
@@ -16,7 +15,8 @@ const CourseSelector = ({courses}) => {
                     <Course key={course.id} course={course} 
                     isDisabled={hasConflict(course, selected)}
                     isSelected={selected.includes(course)}
-                     select ={toggle} />
+                     select ={toggle} 
+                     view = {view}/>
                 ))
             }
         </View>
