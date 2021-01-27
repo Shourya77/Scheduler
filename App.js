@@ -3,9 +3,9 @@ import React, { useState } from 'react';
 import { Button } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import UserContext from './components/UserContext';
 import ScheduleScreen from './screens/ScheduleScreen';
 import CourseDetailScreen from './screens/CourseDetailScreen';
-import UserContext from './components/UserContext';
 import CourseEditScreen from './screens/CourseEditScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import { useEffect } from 'react/cjs/react.development';
@@ -16,10 +16,10 @@ const Stack = createStackNavigator();
 
 const SignInButton = ({ navigation, user }) => (
   user && user.uid
-    ? <Button title="Logout" color="#448aff"
+  ? <Button title="Logout" color="#448aff"
       onPress={() => firebase.auth().signOut()}
     />
-    : <Button title="SignIn" color="448aff"
+  : <Button title="SignIn" color="#448aff"
       onPress={() => navigation.navigate('RegisterScreen')}
     />
 );
@@ -27,12 +27,6 @@ const SignInButton = ({ navigation, user }) => (
 const App = () => {
   const [auth, setAuth] = useState();
   const [user, setUser] = useState(null);
-  
-  useEffect(() => {
-    firebase.auth().onAuthStateChanged((auth) => { 
-      setStatusBarHidden(auth);
-    });
-  }, []);
 
   useEffect(() => {
     if (auth && auth.uid) {
@@ -46,6 +40,12 @@ const App = () => {
       setUser(null);
     }
   }, [auth]);
+
+  useEffect(() => {
+    firebase.auth().onAuthStateChanged((auth) => {
+      setAuth(auth);
+    });
+  }, []);
 
   return (
     <UserContext.Provider value={user}>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
-import * as Yup from 'Yup';
+import * as Yup from 'yup';
 import Form from '../Form';
 import { firebase } from '../firebase';
 
@@ -37,7 +37,7 @@ const RegisterScreen = ({ navigation }) => {
         try {
             const authCredential = await registerWithEmail(email, password);
             const user = authCredential.user;
-            await user.updateProfile({displayName: name});
+            await user.updateProfile({ displayName: name });
             navigation.navigate('SchedulerScreen');
         } catch (error) {
             setSignInError(error.message);
@@ -78,7 +78,7 @@ const RegisterScreen = ({ navigation }) => {
                         textContentType="password"
                     />
                     <Form.Field
-                        name="confirmPassword"
+                        name="confirm"
                         leftIcon="lock"
                         placeholder="Confirm password"
                         autoCapitalize="none"
@@ -98,9 +98,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: '#ccccb3'
-    },
-    formContainer: {
-        width: '60%',
     },
 });
 
