@@ -1,21 +1,19 @@
-import React, { useContext, useState, useEffect } from 'react';
-import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
+import React from 'react';
+import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import CourseList from '../components/CourseList';
-import UserContext from '../components/UserContext';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { useContext, useState, useEffect } from 'react';
+import CourseDetailScreen from './CourseDetailScreen';
 import CourseEditScreen from './CourseEditScreen';
-import { firebase } from "../firebase";
+import UserContext from '../UserContext';
 
-const Banner = ({title}) => (
+const Banner = ({ title }) => (
   <Text style={styles.bannerStyle}>{title || '[loading...]'}</Text>
 );
 
-
-const fixCourses = json => ({
-  ...json,
-  courses: Object.values(json.courses)
-});
-
-const ScheduleScreen = ( { navigation }) => {
+const ScheduleScreen = ({ navigation }) => {
   const user = useContext(UserContext);
   const canEdit = user && user.role === 'admin';
   const [schedule, setSchedule] = useState({ title: '', courses: [] });
@@ -23,17 +21,17 @@ const ScheduleScreen = ( { navigation }) => {
   const view = (course) => {
     navigation.navigate(canEdit ? 'CourseEditScreen' : 'CourseDetailScreen', { course });
   };
-  
-  useEffect(() => {
-    const db = firebase.database().ref();
-    const handleData = snap => {
-      if (snap.val()) setSchedule(fixCourses(snap.val()));
-    }
-    db.on('value', handleData, error => alert(error));
-    return () => { db.off('value', handleData); };
-  }, []);
 
-  
+  const url = 'https://courses.cs.northwestern.edu/394/data/cs-courses.php';
+  useEffect(() => {
+    const fetchSchedule = async () => {
+      const response = await fetch(url);
+      if (!response.ok) throw response;
+      const json = await response.json();
+      setSchedule(json);
+    }
+    fetchSchedule();
+  }, []);
   return (
     <SafeAreaView style={styles.container}>
       <Banner title={schedule.title} />
@@ -41,7 +39,6 @@ const ScheduleScreen = ( { navigation }) => {
     </SafeAreaView>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -52,7 +49,6 @@ const styles = StyleSheet.create({
   bannerStyle: {
     color: '#888',
     fontSize: 32,
-  },
+  }
 });
-
 export default ScheduleScreen;
