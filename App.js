@@ -12,13 +12,13 @@ import { firebase } from './firebase';
 
 const Stack = createStackNavigator();
 
-const SignInButton = { navigation, user } => (
+const SignInButton = ({navigation, user}) => (
 	user && user.uid
-		? <Button title="Logout" color="#448aff"
-			onPress={() => firebase.auth().signOut()}
+	? <Button title="Logout" color="#448aff"
+		onPress= {() => firebase.auth().signOut()}
 		/>
-		: <Button title="SignIn" color="#448aff"
-			onPress={() => navigation.auth('RegisterScreen')}
+	: <Button title="SignIn" color="#448aff"
+		onPress={() => navigation.navigate('RegisterScreen')}
 		/>
 );
 
