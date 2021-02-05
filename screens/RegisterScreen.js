@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
+import Form from '../components/Form'
 import * as Yup from 'yup';
-import Form from '../Form';
+import { useState } from 'react';
 import { firebase } from '../firebase';
 
 const validationSchema = Yup.object().shape({
@@ -18,13 +19,13 @@ const validationSchema = Yup.object().shape({
 });
 
 const RegisterScreen = ({ navigation }) => {
-    const [singInError, setSignInError] = useState('');
+    const [signInError, setSignInError] = useState('')
 
     async function handleOnLogin(values) {
         const { email, password } = values;
         setSignInError(null);
         try {
-            await loginWithEmail(email, password);
+            await firebase.auth().signInWithEmailAndPassword(email, password);
             navigation.navigate('ScheduleScreen');
         } catch (error) {
             setSignInError(error.message);
@@ -35,12 +36,12 @@ const RegisterScreen = ({ navigation }) => {
         const { name, email, password } = values;
         setSignInError(null);
         try {
-            const authCredential = await registerWithEmail(email, password);
+            const authCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
             const user = authCredential.user;
             await user.updateProfile({ displayName: name });
-            navigation.navigate('SchedulerScreen');
+            navigation.navigate('ScheduleScreen');
         } catch (error) {
-            setSignInError(error.message);
+            setSignInError(error.message)
         }
     }
 
@@ -61,7 +62,7 @@ const RegisterScreen = ({ navigation }) => {
                     onSubmit={handleOnSubmit}
                 >
                     <Form.Field
-                        name='email'
+                        name="email"
                         leftIcon="email"
                         placeholder="Enter email"
                         autoCapitalize="none"
@@ -69,7 +70,7 @@ const RegisterScreen = ({ navigation }) => {
                         textContentType="emailAddress"
                     />
                     <Form.Field
-                        name="Password"
+                        name="password"
                         leftIcon="lock"
                         placeholder="Enter password"
                         autoCapitalize="none"
@@ -86,19 +87,19 @@ const RegisterScreen = ({ navigation }) => {
                         secureTextEntry={true}
                         textContentType="password"
                     />
+                    <Form.Button title={values => values.confirm ? 'Register' : 'Login'} />
+                    {<Form.ErrorMessage error={signInError} visible={true} />}
                 </Form>
             </ScrollView>
         </SafeAreaView>
     );
-};
-
+}
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: '#ccccb3'
-    },
+    }
 });
-
 export default RegisterScreen;
